@@ -69,6 +69,18 @@ def stat_text(stat_values):
 						should_use = True
 						break
 				
+				if len(variant) > len(parameter_values) + 2:
+					transformation = variant[len(parameter_values) + 1]
+					parameter = int(variant[len(parameter_values) + 2]) - 1
+					if transformation == 'per_minute_to_per_second':
+						parameter_values[parameter] = str(float(parameter_values[parameter]) / 60)
+					elif transformation == 'milliseconds_to_seconds':
+						parameter_values[parameter] = str(float(parameter_values[parameter]) / 1000)
+					elif transformation == 'divide_by_one_hundred':
+						parameter_values[parameter] = str(float(parameter_values[parameter]) / 100)
+					elif transformation == 'negate':
+						parameter_values[parameter] = str(float(parameter_values[parameter]) * -1)
+				
 				if should_use:
 					ret.append(subprocess.check_output(['./boost-formatter', variant[len(parameter_values)]] + parameter_values))
 					break
