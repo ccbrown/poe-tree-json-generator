@@ -195,20 +195,6 @@ for i in range(group_count):
 with open('./merge.json', 'r') as f:
     json_data.update(json.loads(f.read()))
 
-def texture_available(texture):
-	global json_data
-
-	for image in json_data['skillSprites']['normalActive']:
-		if texture in image['coords']:
-			return True
-
-	for image in json_data['skillSprites']['notableActive']:
-		if texture in image['coords']:
-			return True
-
-
-	return False
-
 # replace images we don't have with a placeholder
 for node in json_data['nodes']:
 	has_texture = False
