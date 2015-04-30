@@ -67,7 +67,7 @@ def stat_text(stat_values):
 		should_add_description = False
 
 		for parameter in description['parameters']:
-			if parameter in stat_values:
+			if parameter in stat_values and stat_values[parameter] != '0':
 				parameter_values.append(stat_values[parameter])
 				should_add_description = True
 			else:
@@ -179,7 +179,7 @@ for i in range(group_count):
 	
 	group_json_data = {
 		'x': x, 'y': y,
-		'oo': {}, # TODO: what is this?
+		'oo': {},
 		'n': [],
 	}
 
@@ -203,6 +203,7 @@ for i in range(group_count):
 		node_json_data['oidx'] = orbit_position
 
 		group_json_data['n'].append(skill_id)
+		group_json_data['oo'][orbit_radius] = True
 
 	json_data['groups'][i + 1] = group_json_data
 
