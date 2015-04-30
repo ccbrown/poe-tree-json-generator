@@ -112,7 +112,7 @@ with open('./PassiveSkills.csv', 'r') as f:
 			'm': row['IsJustIcon'] == 'True',
 			's': row['IsSocket'] == 'True',
 			'spc': [], # TODO: what is this?
-			'sd': stat_text(stat_values),
+			'sd': (['1 Jewel Socket'] if row['IsSocket'] == 'True' else []) + stat_text(stat_values),
 			'sa': stat_values['base_strength'] if 'base_strength' in stat_values else 0,
 			'da': stat_values['base_dexterity'] if 'base_dexterity' in stat_values else 0,
 			'ia': stat_values['base_intelligence'] if 'base_intelligence' in stat_values else 0,
