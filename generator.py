@@ -96,9 +96,8 @@ def stat_text(stat_values):
 					elif transformation == 'negate':
 						parameter_values[parameter] = str(float(parameter_values[parameter]) * -1)
 				
-				if should_use:
-					ret.append(subprocess.check_output(['./boost-formatter', variant[len(parameter_values)]] + parameter_values).decode('ascii'))
-					break
+				ret.append(subprocess.check_output(['./boost-formatter', variant[len(parameter_values)]] + parameter_values).decode('ascii'))
+				break
 
 	return ret
 
