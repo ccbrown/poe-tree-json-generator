@@ -17,22 +17,34 @@ with open('./Stats.csv', 'r') as f:
 
 stat_descriptions = dict()
 
-with codecs.open('./stat_descriptions.txt', encoding='utf-16') as f:
-	stat_description_lines = f.readlines()
+def description_file_lines(filename):
+	with open(filename, 'rb') as f:
+		contents = f.read()
 
-with codecs.open('./passive_skill_stat_descriptions.txt', encoding='utf-16') as f:
-	stat_description_lines += f.readlines()
+	binary_lines = contents.split(b'\x0A\x00')
+
+	lines = []
+	for line in binary_lines:
+		try:
+			lines.append(line.decode('utf-16-le').encode('ascii').decode('ascii').strip())
+		except:
+			pass
+
+	return lines
+
+stat_description_lines = description_file_lines('./stat_descriptions.txt')
+stat_description_lines += description_file_lines('./passive_skill_stat_descriptions.txt')
 
 for i in range(len(stat_description_lines)):
-	if stat_description_lines[i].encode('utf-8').strip() == 'description':
+	if stat_description_lines[i] == 'description':
 		i += 1
-		parameters = stat_description_lines[i].encode('utf-8').split()[1:]
+		parameters = stat_description_lines[i].split()[1:]
 		i += 1
 		variants = []
-		variant_count = int(stat_description_lines[i].encode('utf-8').split()[0])
+		variant_count = int(stat_description_lines[i].split()[0])
 		for j in range(variant_count):
 			i += 1
-			variants.append(shlex.split(stat_description_lines[i].encode('utf-8')))
+			variants.append(shlex.split(stat_description_lines[i]))
 
 		stat_descriptions[tuple(parameters)] = {
 			'parameters': parameters,
@@ -50,7 +62,7 @@ def parameter_match(range, n):
 def stat_text(stat_values):
 	ret = []
 		
-	for description in stat_descriptions.itervalues():
+	for description in stat_descriptions.values():
 		parameter_values = []
 		should_add_description = False
 
@@ -85,7 +97,7 @@ def stat_text(stat_values):
 						parameter_values[parameter] = str(float(parameter_values[parameter]) * -1)
 				
 				if should_use:
-					ret.append(subprocess.check_output(['./boost-formatter', variant[len(parameter_values)]] + parameter_values))
+					ret.append(subprocess.check_output(['./boost-formatter', variant[len(parameter_values)]] + parameter_values).decode('ascii'))
 					break
 
 	return ret
@@ -145,7 +157,7 @@ def read_graph_float():
 	return ret
 
 if read_graph_byte() != 2:
-	print 'invalid graph version'
+	print('invalid graph version')
 	sys.exit(1)
 
 unknown_count = read_graph_byte()
@@ -196,7 +208,7 @@ for i in range(group_count):
 
 
 with open('./merge.json', 'r') as f:
-    json_data.update(json.loads(f.read()))
+	json_data.update(json.loads(f.read()))
 
 # replace images we don't have with a placeholder
 for node in json_data['nodes']:
@@ -237,4 +249,4 @@ for node in json_data['nodes']:
 		if not has_texture:
 			node['icon'] = 'Art/2DArt/SkillIcons/passives/chargestr.png'
 
-print json.dumps(json_data)
+print(json.dumps(json_data))
