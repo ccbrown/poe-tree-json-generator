@@ -49,7 +49,7 @@ def parameter_match(range, n):
 
 def stat_text(stat_values):
 	ret = []
-	
+		
 	for description in stat_descriptions.itervalues():
 		parameter_values = []
 		should_add_description = False
@@ -63,11 +63,14 @@ def stat_text(stat_values):
 
 		if should_add_description:
 			for variant in description['variants']:
-				should_use = False
+				should_use = True
 				for i in range(len(parameter_values)):
-					if parameter_match(variant[i], parameter_values[i]):
-						should_use = True
+					if not parameter_match(variant[i], parameter_values[i]):
+						should_use = False
 						break
+				
+				if not should_use:
+					continue
 				
 				if len(variant) > len(parameter_values) + 2:
 					transformation = variant[len(parameter_values) + 1]
