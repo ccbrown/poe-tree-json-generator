@@ -123,7 +123,7 @@ with open('./PassiveSkills.csv', 'r') as f:
 			'm': row['IsJustIcon'] == 'True',
 			's': row['IsSocket'] == 'True',
 			'spc': [], # TODO: what is this?
-			'sd': (['1 Jewel Socket'] if row['IsSocket'] == 'True' else []) + stat_text(stat_values),
+			'sd': stat_text(stat_values),
 			'sa': stat_values['base_strength'] if 'base_strength' in stat_values else 0,
 			'da': stat_values['base_dexterity'] if 'base_dexterity' in stat_values else 0,
 			'ia': stat_values['base_intelligence'] if 'base_intelligence' in stat_values else 0,
@@ -239,7 +239,9 @@ for node in json_data['nodes']:
 		if not has_texture:
 			node['icon'] = 'Art/2DArt/SkillIcons/passives/MasteryGroupMace.png'
 	elif node['s']:
-		node['icon'] = 'Art/2DArt/SkillIcons/passives/chargeint.png'
+		node['icon'] = 'Art/2DArt/SkillIcons/passives/blank.png'
+		node['sd'] = ['1 Jewel Socket']
+		node['not'] = True
 	else:
 		for image in json_data['skillSprites']['normalActive']:
 			if node['icon'] in image['coords']:
@@ -248,5 +250,16 @@ for node in json_data['nodes']:
 
 		if not has_texture:
 			node['icon'] = 'Art/2DArt/SkillIcons/passives/chargestr.png'
+
+for image in json_data['skillSprites']['notableActive']:
+	# TODO: get rid of this hack
+	if image['filename'] == 'skill_sprite-active-3-62ca5131ab27a2029a98e71a1adc1ef3.jpg':
+		image['coords']['Art/2DArt/SkillIcons/passives/blank.png'] = {
+			"x": 418,
+			"y": 618,
+			"w": 38,
+			"h": 38,
+		}
+		break
 
 print(json.dumps(json_data))
