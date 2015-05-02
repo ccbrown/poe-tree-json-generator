@@ -122,7 +122,7 @@ with open('./PassiveSkills.csv', 'r') as f:
 			'dn': row['Name'],
 			'm': row['IsJustIcon'] == 'True',
 			's': row['IsSocket'] == 'True',
-			'spc': [], # TODO: what is this?
+			'spc': json.loads(row['Data1']),
 			'sd': stat_text(stat_values),
 			'sa': stat_values['base_strength'] if 'base_strength' in stat_values else 0,
 			'da': stat_values['base_dexterity'] if 'base_dexterity' in stat_values else 0,
@@ -206,12 +206,32 @@ for i in range(group_count):
 
 	json_data['groups'][i + 1] = group_json_data
 
+# post-processing - ideally, we wouldn't need anything below this line
 
 with open('./merge.json', 'r') as f:
 	json_data.update(json.loads(f.read()))
 
-# replace images we don't have with a placeholder
 for node in json_data['nodes']:
+	# make sure our starting class ids match the data we merged
+	# TODO: generate characterData and constants['classes'] instead
+
+	if node['dn'] == 'SIX':
+		node['spc'][0] = json_data['constants']['classes']['DexIntClass']
+	elif node['dn'] == 'Seven':
+		node['spc'][0] = json_data['constants']['classes']['StrDexIntClass']
+	elif node['dn'] == 'MARAUDER':
+		node['spc'][0] = json_data['constants']['classes']['StrClass']
+	elif node['dn'] == 'TEMPLAR':
+		node['spc'][0] = json_data['constants']['classes']['StrIntClass']
+	elif node['dn'] == 'WITCH':
+		node['spc'][0] = json_data['constants']['classes']['IntClass']
+	elif node['dn'] == 'DUELIST':
+		node['spc'][0] = json_data['constants']['classes']['StrDexClass']
+	elif node['dn'] == 'RANGER':
+		node['spc'][0] = json_data['constants']['classes']['DexClass']
+
+	# replace images we don't have with a placeholder
+
 	has_texture = False
 
 	if node['ks']:
@@ -252,7 +272,7 @@ for node in json_data['nodes']:
 			node['icon'] = 'Art/2DArt/SkillIcons/passives/chargestr.png'
 
 for image in json_data['skillSprites']['notableActive']:
-	# TODO: get rid of this hack
+	# make sockets look like blank notables
 	if image['filename'] == 'skill_sprite-active-3-62ca5131ab27a2029a98e71a1adc1ef3.jpg':
 		image['coords']['Art/2DArt/SkillIcons/passives/blank.png'] = {
 			"x": 418,
